@@ -9,12 +9,28 @@
 import SpriteKit
 class GameScene: SKScene {
     
+    let playableRect: CGRect
     let zombie = SKSpriteNode(imageNamed: "zombie1")
     var lastUpdateTime: TimeInterval = 0
        var dt: TimeInterval = 0
     let zombieMovePointsPerSec: CGFloat = 480.0
     var velocity = CGPoint.zero
+    //let playableRect: CGRect
     
+     override init(size: CGSize) {
+      let maxAspectRatio:CGFloat = 16.0/9.0 // 1
+      let playableHeight = size.width / maxAspectRatio // 2
+      let playableMargin = (size.height-playableHeight)/2.0 // 3
+      playableRect = CGRect(x: 0, y: playableMargin,
+                            width: size.width,
+                            height: playableHeight) // 4
+      super.init(size: size)
+       
+        // 5
+    }
+    required init(coder aDecoder: NSCoder) {
+         fatalError("init(coder:) has not been implemented")
+       }
     
   override func didMove(to view: SKView) {
     backgroundColor = SKColor.black
@@ -25,20 +41,20 @@ class GameScene: SKScene {
     addChild(background)
     zombie.position = CGPoint(x:400,y:400)
     addChild(zombie)
-    
-    
-    
+    debugDrawPlayableArea()
+
   }
-    public struct CGSize {
-      public var width: CGFloat
-      public var height: CGFloat
-      // ...
-    }
+
+//    public struct CGSize {
+//      public var width: CGFloat
+//      public var height: CGFloat
+//      // ...
+//    }
     
     //update function
     
     override func update(_ currentTime: TimeInterval){
-        
+
         if lastUpdateTime > 0 {
           dt = currentTime - lastUpdateTime
         } else {
@@ -56,7 +72,7 @@ class GameScene: SKScene {
       sprite.position = CGPoint(
         x: sprite.position.x + amountToMove.x,
         y: sprite.position.y + amountToMove.y)
-        //below function will bound the zombie into the limit of the screen size 
+        //below function will bound the zombie into the limit of the screen size
         boundsCheckZombie()
     }
     // move zombie toward the points
@@ -98,9 +114,12 @@ class GameScene: SKScene {
     
     
     func boundsCheckZombie() {
-      let bottomLeft = CGPoint.zero
-      let topRight = CGPoint(x: size.width, y: size.height)
-      if zombie.position.x <= bottomLeft.x {
+//      let bottomLeft = CGPoint.zero
+//      let topRight = CGPoint(x: size.width, y: size.height)
+        let bottomLeft = CGPoint(x: 0, y: playableRect.minY)
+    let topRight = CGPoint(x: size.width, y: playableRect.maxY)
+        
+        if zombie.position.x <= bottomLeft.x {
         zombie.position.x = bottomLeft.x
         velocity.x = -velocity.x
       }
@@ -116,5 +135,17 @@ class GameScene: SKScene {
         zombie.position.y = topRight.y
         velocity.y = -velocity.y
       }
+        
     }
+    //this fucntion is to draw rectangle
+    func debugDrawPlayableArea() {
+      let shape = SKShapeNode()
+      let path = CGMutablePath()
+      path.addRect(playableRect)
+      shape.path = path
+      shape.strokeColor = SKColor.red
+      shape.lineWidth = 4.0
+      addChild(shape)
+    }
+    
 }
