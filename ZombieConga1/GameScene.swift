@@ -46,8 +46,7 @@ class GameScene: SKScene {
         lastUpdateTime = currentTime
          move(sprite: zombie, velocity: velocity)}
     
-    //function move
-    
+    //function move to movie zombie
     func move(sprite: SKSpriteNode, velocity: CGPoint) {
      
       let amountToMove = CGPoint(x: velocity.x * CGFloat(dt),
@@ -57,6 +56,8 @@ class GameScene: SKScene {
       sprite.position = CGPoint(
         x: sprite.position.x + amountToMove.x,
         y: sprite.position.y + amountToMove.y)
+        //below function will bound the zombie into the limit of the screen size 
+        boundsCheckZombie()
     }
     // move zombie toward the points
 
@@ -73,6 +74,7 @@ class GameScene: SKScene {
                            y: direction.y * zombieMovePointsPerSec)
     
     }
+    
     //zombie moves on touch
     func sceneTouched(touchLocation:CGPoint) {
       moveZombieToward(location: touchLocation)
@@ -92,5 +94,27 @@ class GameScene: SKScene {
       }
       let touchLocation = touch.location(in: self)
       sceneTouched(touchLocation: touchLocation)
+    }
+    
+    
+    func boundsCheckZombie() {
+      let bottomLeft = CGPoint.zero
+      let topRight = CGPoint(x: size.width, y: size.height)
+      if zombie.position.x <= bottomLeft.x {
+        zombie.position.x = bottomLeft.x
+        velocity.x = -velocity.x
+      }
+      if zombie.position.x >= topRight.x {
+        zombie.position.x = topRight.x
+        velocity.x = -velocity.x
+      }
+      if zombie.position.y <= bottomLeft.y {
+        zombie.position.y = bottomLeft.y
+        velocity.y = -velocity.y
+      }
+      if zombie.position.y >= topRight.y {
+        zombie.position.y = topRight.y
+        velocity.y = -velocity.y
+      }
     }
 }
