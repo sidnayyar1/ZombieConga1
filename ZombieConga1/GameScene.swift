@@ -26,11 +26,11 @@ class GameScene: SKScene {
                             height: playableHeight) // 4
       super.init(size: size)
        
-        // 5
     }
     required init(coder aDecoder: NSCoder) {
          fatalError("init(coder:) has not been implemented")
        }
+    
     
   override func didMove(to view: SKView) {
     backgroundColor = SKColor.black
@@ -60,7 +60,12 @@ class GameScene: SKScene {
         } else {
         dt = 0 }
         lastUpdateTime = currentTime
-         move(sprite: zombie, velocity: velocity)}
+        //function call to move zombie
+         move(sprite: zombie, velocity: velocity)
+        //function call for roating zombie
+        rotate(sprite: zombie, direction: velocity)
+        
+    }
     
     //function move to movie zombie
     func move(sprite: SKSpriteNode, velocity: CGPoint) {
@@ -73,7 +78,9 @@ class GameScene: SKScene {
         x: sprite.position.x + amountToMove.x,
         y: sprite.position.y + amountToMove.y)
         //below function will bound the zombie into the limit of the screen size
+        //function call for boundaries
         boundsCheckZombie()
+       
     }
     // move zombie toward the points
 
@@ -112,7 +119,7 @@ class GameScene: SKScene {
       sceneTouched(touchLocation: touchLocation)
     }
     
-    
+    //function with set boundaries for zombie
     func boundsCheckZombie() {
 //      let bottomLeft = CGPoint.zero
 //      let topRight = CGPoint(x: size.width, y: size.height)
@@ -147,5 +154,10 @@ class GameScene: SKScene {
       shape.lineWidth = 4.0
       addChild(shape)
     }
-    
+
+    //function to rotate zombie
+    func rotate(sprite: SKSpriteNode, direction: CGPoint) {
+    sprite.zRotation = CGFloat(
+      atan2(Double(direction.y), Double(direction.x)))
+    }
 }
